@@ -16,34 +16,19 @@ function App() {
     [data, setData] = useState([]),
     [dataToShow, setDataToShow] = useState([]);
 
-
-  const listItems = dataToShow.map((dataToShow) =>
-    <div>
-      <Card style={{ width: '18rem' }}>
-        <Card.Body>
-          <Card.Title> {dataToShow.title}</Card.Title>
-
-          <p>{dataToShow.completed ? <p>Completada </p> : <p>Pendiente </p>}</p>
-          <Button variant="primary">Habilitar</Button>
-        </Card.Body>
-      </Card>
-
-    </div>
-  );
-
   useEffect(() => {
     // fetch("https://randomuser.me/api").then(response => {
     fetch("https://embed.cartfulsolutions.com/prodtest/todos3.json").then(response => {
-      console.log("response:", response);
-      console.log("response.body:", response.body);
+      //console.log("response:", response);
+      //console.log("response.body:", response.body);
 
       response.json().then(dataResponse => {
-        console.log("dataResponse:", dataResponse);
-        setData(dataResponse);
+        //console.log("dataResponse:", dataResponse);
+        //setData(dataResponse);
         setDataToShow(dataResponse);
       })
 
-      console.log("Funciono el fetch.");
+      // console.log("Funciono el fetch.");
       setIsLoading(false);
 
     }).catch(error => {
@@ -53,7 +38,7 @@ function App() {
   }, []);
 
   const filtrarPending = () => {
-    console.log("filtrarPending()");
+    // console.log("filtrarPending()");
     const dataToFilter = data;
     let pendingData = dataToFilter.filter(function (data) {
       //console.log("data:", data);
@@ -65,18 +50,53 @@ function App() {
   }
 
   const filtrarCompletadas = () => {
-    console.log("filtrarCompletadas()");
+    // console.log("filtrarCompletadas()");
     const dataToFilter = data;
     let pendingData = dataToFilter.filter(function (data) {
       //console.log("data:", data);
       return data.completed === true;
     });
 
-    console.log("pendingData:", pendingData);
+    // console.log("pendingData:", pendingData);
     setDataToShow(pendingData)
   }
 
-  console.log("isLoading:", isLoading);
+  const cambiarStatus = (id) => {
+    console.log("cambiarStatus");
+    console.log("id:", id);
+
+    let dataToLoop = data;
+
+    dataToLoop.forEach(dataelement => {
+      if (dataelement.id === id) {
+        if (dataelement.completed === true) {
+          dataelement.completed = false
+        }
+        else {
+          dataelement.completed = true
+        }
+
+      }
+    });
+    //setDataToShow(dataToLoop);
+  }
+
+
+  const listItems = dataToShow.map((dataToShow) =>
+    <div key={dataToShow.id}>
+      <Card style={{ width: '18rem' }}>
+        <Card.Body>
+          <Card.Title> {dataToShow.title}</Card.Title>
+
+          <p>{dataToShow.completed ? <p>Completada </p> : <p>Pendiente </p>}</p>
+          <Button onClick={() => cambiarStatus(dataToShow.id)} variant="primary">Habilitar/Deshabilitar</Button>
+        </Card.Body>
+      </Card>
+
+    </div>
+  );
+
+  // console.log("isLoading:", isLoading);
   return (
     <div className="App">
       <header className="App-header">
