@@ -24,7 +24,7 @@ function App() {
 
       response.json().then(dataResponse => {
         //console.log("dataResponse:", dataResponse);
-        //setData(dataResponse);
+        setData(dataResponse);
         setDataToShow(dataResponse);
       })
 
