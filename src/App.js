@@ -2,7 +2,12 @@ import './App.css';
 import Loader from "react-loader-spinner";
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import { makeStyles } from "@material-ui/core/styles";
+import SearchIcon from '@material-ui/icons/Search';
+import InputBase from '@material-ui/core/InputBase';
+import TextField from '@material-ui/core/TextField';
+
+import { useStyles } from "./styles";
+
 
 // import Container from 'react-bootstrap/Container';
 // import Row from 'react-bootstrap/Row';
@@ -16,7 +21,12 @@ function App() {
   const [isLoading, setIsLoading] = useState(true),
     [data, setData] = useState([]),
     [dataShowing, setDataShowing] = useState("TODAS"),
-    [dataToShow, setDataToShow] = useState([]);
+    [dataToShow, setDataToShow] = useState([]),
+    [newTask, setNewTask] = useState("");
+
+
+  const classes = useStyles();
+
 
 
   useEffect(() => {
@@ -59,10 +69,7 @@ function App() {
   }
 
   const cambiarStatus = (id) => {
-
-
     let dataToLoop = data;
-
     dataToLoop.forEach(dataelement => {
       if (dataelement.id === id) {
         if (dataelement.completed === true) {
@@ -87,31 +94,40 @@ function App() {
     }
 
   }
+  const buscarTarea = (event) => {
+    const dataToFilter = data;
+    let filteredData = dataToFilter.filter(function (data) {
+      return data.title.includes(event.target.value);
+    });
+    console.log(filteredData);
+    //setDataShowing("COMPLETADAS");
+    setDataToShow(filteredData)
+  }
 
-  const useStyles = makeStyles((theme) => ({
-    list: {
-      paddingLeft: 0,
-      paddingBottom: "3em",
-      width: "500px"
-    },
-    buttonNav: {
-      position: "relative",
-      minWidth: "20%",
-      minHeight: "3em"
-    },
-    toDoList: {
-      position: "absolute",
-      top: "5%",
-      left: "0px",
-      width: "500px",
-      height: "405px",
-      right: "0px",
-      margin: "0px auto",
+  const handleSubmit = () => {
+
+    if (newTask != "") {
+      let newTasks = data;
+      let taskIDs = [];
+
+      newTasks.forEach(task => {
+        taskIDs.push(task.id);
+      }
+      );
+
+      let max = Math.max(...taskIDs);
+      let newTaskObject = {
+        id: (max + 1),
+        title: newTask,
+        completed: false
+      }
+      newTasks.push(newTaskObject);
+
+      setData(newTasks);
+      setDataToShow([...newTasks]);
+      setNewTask("");
     }
-  }));
-
-  const classes = useStyles();
-
+  };
 
   const listItems = dataToShow.map((dataToShow) =>
     <div key={dataToShow.id}>
@@ -120,9 +136,8 @@ function App() {
       }}>
         <Card.Body>
           <Card.Title> {dataToShow.title}</Card.Title>
-
-          <p>{dataToShow.completed ? "Completada" : "Pendiente"}</p>
-          <Button onClick={() => cambiarStatus(dataToShow.id)} variant="primary">Habilitar/Deshabilitar</Button>
+          {dataToShow.completed ? <p style={{ color: "green" }}>Completada</p> : <p style={{ color: "#F77171", fontStyle: "bold" }}>Pendiente</p>}
+          <Button onClick={() => cambiarStatus(dataToShow.id)} variant="primary">{dataToShow.completed ? "Marcar como Pendiente" : "Marcar como Completada"}</Button>
         </Card.Body>
       </Card>
 
@@ -149,6 +164,26 @@ function App() {
                 <Button className={classes.buttonNav} onClick={filtrarPending} variant="contained">Pending</Button>
                 <Button className={classes.buttonNav} onClick={filtrarCompletadas} variant="contained" color="primary"> Completadas </Button>
                 <Button className={classes.buttonNav} onClick={filtrarTodas} variant="contained">Todas</Button>
+              </div>
+
+              <div className={classes.addTaskDiv} >
+                <TextField className={classes.addTaskText} id="outlined-basic" type="text" name='newTask' value={newTask} label="Agregar Tarea"
+                  variant="filled" onChange={(e) => setNewTask(e.target.value)} InputProps={{ className: classes.multilineColor }} />
+                <button className={classes.buttonNav} onClick={handleSubmit}>Agregar Tarea</button>
+              </div>
+
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
+                </div>
+                <InputBase
+                  placeholder="Buscar tareas..."
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput,
+                  }}
+                  inputProps={{ 'aria-label': 'search' }}
+                  onChange={(event) => buscarTarea(event)} />
               </div>
 
               <div>
