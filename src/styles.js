@@ -40,6 +40,7 @@ export const useStyles = makeStyles((theme) => ({
     },
 
     //CSS tomado de https://material-ui.com/es/components/app-bar/
+    
     search: {
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
@@ -78,7 +79,7 @@ export const useStyles = makeStyles((theme) => ({
             width: '20ch',
         },
     },
-    //CSS tomado de https://material-ui.com/es/components/app-bar/
+    //CSS tomado de https://material-ui.com/components/text-fields/
 
     root: {
         '& > *': {

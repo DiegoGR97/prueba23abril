@@ -99,23 +99,24 @@ function App() {
     let filteredData = dataToFilter.filter(function (data) {
       return data.title.includes(event.target.value);
     });
-    console.log(filteredData);
     //setDataShowing("COMPLETADAS");
     setDataToShow(filteredData)
   }
 
   const handleSubmit = () => {
-
-    if (newTask != "") {
+    if (newTask !== "") {
       let newTasks = data;
       let taskIDs = [];
 
       newTasks.forEach(task => {
         taskIDs.push(task.id);
-      }
-      );
+      });
 
-      let max = Math.max(...taskIDs);
+      let max = 0;
+      if (!(taskIDs.length < 1)){
+        max = Math.max(...taskIDs);
+      }
+
       let newTaskObject = {
         id: (max + 1),
         title: newTask,
@@ -128,6 +129,15 @@ function App() {
       setNewTask("");
     }
   };
+  const eliminarTask = (id) => {
+    const dataToFilter = data;
+    let filteredData = dataToFilter.filter(function (data) {
+      return data.id !== id;
+    });
+    setData(filteredData);
+    setDataToShow(filteredData)
+
+  }
 
   const listItems = dataToShow.map((dataToShow) =>
     <div key={dataToShow.id}>
@@ -137,7 +147,10 @@ function App() {
         <Card.Body>
           <Card.Title> {dataToShow.title}</Card.Title>
           {dataToShow.completed ? <p style={{ color: "green" }}>Completada</p> : <p style={{ color: "#F77171", fontStyle: "bold" }}>Pendiente</p>}
-          <Button onClick={() => cambiarStatus(dataToShow.id)} variant="primary">{dataToShow.completed ? "Marcar como Pendiente" : "Marcar como Completada"}</Button>
+          <div style={{ paddingBottom: "1em" }}>
+            <Button onClick={() => cambiarStatus(dataToShow.id)} variant="primary">{dataToShow.completed ? "Marcar como Pendiente" : "Marcar como Completada"}</Button>
+            <Button style={{ color: "red", marginLeft: "5px" }} onClick={() => eliminarTask(dataToShow.id)} variant="primary">Eliminar</Button>
+          </div>
         </Card.Body>
       </Card>
 
