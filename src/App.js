@@ -2,6 +2,8 @@ import './App.css';
 import Loader from "react-loader-spinner";
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import { makeStyles } from "@material-ui/core/styles";
+
 // import Container from 'react-bootstrap/Container';
 // import Row from 'react-bootstrap/Row';
 // import Col from 'react-bootstrap/Col';
@@ -86,9 +88,36 @@ function App() {
 
   }
 
+  const useStyles = makeStyles((theme) => ({
+    list: {
+      paddingLeft: 0,
+      paddingBottom: "3em",
+      width: "500px"
+    },
+    buttonNav: {
+      position: "relative",
+      minWidth: "20%",
+      minHeight: "3em"
+    },
+    toDoList: {
+      position: "absolute",
+      top: "5%",
+      left: "0px",
+      width: "500px",
+      height: "405px",
+      right: "0px",
+      margin: "0px auto",
+    }
+  }));
+
+  const classes = useStyles();
+
+
   const listItems = dataToShow.map((dataToShow) =>
     <div key={dataToShow.id}>
-      <Card style={{ width: '18rem' }}>
+      <Card style={{
+        width: '100%', marginBottom: '1em', backgroundColor: "#4E4E4E"
+      }}>
         <Card.Body>
           <Card.Title> {dataToShow.title}</Card.Title>
 
@@ -102,8 +131,7 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-
+      <div>
         {isLoading ?
           <Loader
             type="Puff"
@@ -115,26 +143,22 @@ function App() {
 
           : <React.Fragment>
 
+            <div className={classes.toDoList}>
+              <h1>To-Do List para Cartful Solutions</h1>
+              <div>
+                <Button className={classes.buttonNav} onClick={filtrarPending} variant="contained">Pending</Button>
+                <Button className={classes.buttonNav} onClick={filtrarCompletadas} variant="contained" color="primary"> Completadas </Button>
+                <Button className={classes.buttonNav} onClick={filtrarTodas} variant="contained">Todas</Button>
+              </div>
 
-            {/* <Container>
-              <Row>
-                <Col>Pending</Col>
-                <Col>All</Col>
-                <Col>Completed</Col>
-              </Row>
-            </Container> */}
+              <div>
+                <ul className={classes.list}>{listItems}</ul>
+              </div>
+            </div>
 
-            <Button onClick={filtrarPending} variant="contained">Pending</Button>
-            <Button onClick={filtrarCompletadas} variant="contained" color="primary">
-              Completadas
-      </Button>
-            <Button onClick={filtrarTodas} variant="contained">Todas</Button>
-
-
-            <ul>{listItems}</ul>
           </React.Fragment>}
 
-      </header>
+      </div>
     </div >
   );
 }
