@@ -1,11 +1,10 @@
-import logo from './logo.svg';
 import './App.css';
 import Loader from "react-loader-spinner";
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+// import Container from 'react-bootstrap/Container';
+// import Row from 'react-bootstrap/Row';
+// import Col from 'react-bootstrap/Col';
 
 import React, { useState, useEffect } from "react";
 
@@ -14,21 +13,18 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(true),
     [data, setData] = useState([]),
+    [dataShowing, setDataShowing] = useState("TODAS"),
     [dataToShow, setDataToShow] = useState([]);
 
+
   useEffect(() => {
-    // fetch("https://randomuser.me/api").then(response => {
     fetch("https://embed.cartfulsolutions.com/prodtest/todos3.json").then(response => {
-      //console.log("response:", response);
-      //console.log("response.body:", response.body);
 
       response.json().then(dataResponse => {
-        //console.log("dataResponse:", dataResponse);
         setData(dataResponse);
         setDataToShow(dataResponse);
       })
 
-      // console.log("Funciono el fetch.");
       setIsLoading(false);
 
     }).catch(error => {
@@ -38,32 +34,30 @@ function App() {
   }, []);
 
   const filtrarPending = () => {
-    // console.log("filtrarPending()");
     const dataToFilter = data;
     let pendingData = dataToFilter.filter(function (data) {
-      //console.log("data:", data);
       return data.completed === false;
     });
-
-    //console.log("pendingData:", pendingData);
+    setDataShowing("PENDIENTES");
     setDataToShow(pendingData)
   }
 
   const filtrarCompletadas = () => {
-    // console.log("filtrarCompletadas()");
     const dataToFilter = data;
     let pendingData = dataToFilter.filter(function (data) {
-      //console.log("data:", data);
       return data.completed === true;
     });
-
-    // console.log("pendingData:", pendingData);
+    setDataShowing("COMPLETADAS");
     setDataToShow(pendingData)
   }
 
+  const filtrarTodas = () => {
+    setDataShowing("TODAS");
+    setDataToShow(data)
+  }
+
   const cambiarStatus = (id) => {
-    console.log("cambiarStatus");
-    console.log("id:", id);
+
 
     let dataToLoop = data;
 
@@ -78,9 +72,19 @@ function App() {
 
       }
     });
-    //setDataToShow(dataToLoop);
-  }
+    let newDataToShow = dataToLoop;
 
+    if (dataShowing === "TODAS") {
+      setDataToShow([...newDataToShow]);
+    }
+    else if (dataShowing === "PENDIENTES") {
+      filtrarPending();
+    }
+    else if (dataShowing === "COMPLETADAS") {
+      filtrarCompletadas();
+    }
+
+  }
 
   const listItems = dataToShow.map((dataToShow) =>
     <div key={dataToShow.id}>
@@ -88,7 +92,7 @@ function App() {
         <Card.Body>
           <Card.Title> {dataToShow.title}</Card.Title>
 
-          <p>{dataToShow.completed ? <p>Completada </p> : <p>Pendiente </p>}</p>
+          <p>{dataToShow.completed ? "Completada" : "Pendiente"}</p>
           <Button onClick={() => cambiarStatus(dataToShow.id)} variant="primary">Habilitar/Deshabilitar</Button>
         </Card.Body>
       </Card>
@@ -96,11 +100,9 @@ function App() {
     </div>
   );
 
-  // console.log("isLoading:", isLoading);
   return (
     <div className="App">
       <header className="App-header">
-        {/* <img src={logo} className="App-logo" alt="logo" /> */}
 
         {isLoading ?
           <Loader
@@ -112,16 +114,7 @@ function App() {
           />
 
           : <React.Fragment>
-            {/* 
-            data.map((number) =>
-                <li>{number}</li> */}
-            {/* <Container style="width: 500px">
-              <Row>
-                <Col>Pending</Col>
-                <Col>All</Col>
-                <Col>Completed</Col>
-              </Row>
-            </Container> */}
+
 
             {/* <Container>
               <Row>
@@ -135,6 +128,8 @@ function App() {
             <Button onClick={filtrarCompletadas} variant="contained" color="primary">
               Completadas
       </Button>
+            <Button onClick={filtrarTodas} variant="contained">Todas</Button>
+
 
             <ul>{listItems}</ul>
           </React.Fragment>}
